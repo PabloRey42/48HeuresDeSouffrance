@@ -246,7 +246,7 @@ async function loadData() {
     setStatus('Chargement des donnees...');
 
     try {
-        const response = await fetch('./data/latest.json', { cache: 'no-store' });
+        const response = await fetch('/api/latest?limit=2000', { cache: 'no-store' });
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}`);
         }
@@ -256,8 +256,23 @@ async function loadData() {
         latestUpdatedAt = payload && typeof payload === 'object' ? payload.updatedAt : null;
         applyFilters();
     } catch (error) {
-        setStatus('Impossible de charger data/latest.json. Lance d\'abord fetcher.js');
-        console.error('Erreur de chargement de donnees:', error);
+        console.warn('API indisponible, tentative sur le fichier local latest.json', error);
+
+        try {
+            const fallbackResponse = await fetch('./data/latest.json', { cache: 'no-store' });
+            if (!fallbackResponse.ok) {
+                throw new Error(`HTTP ${fallbackResponse.status}`);
+            }
+
+            const payload = await fallbackResponse.json();
+            allRows = Array.isArray(payload) ? payload : (payload.rows || []);
+            latestUpdatedAt = payload && typeof payload === 'object' ? payload.updatedAt : null;
+            applyFilters();
+            setStatus('Donnees chargees depuis le fichier local (fallback).');
+        } catch (fallbackError) {
+            setStatus('Impossible de charger les donnees (API et fichier local indisponibles).');
+            console.error('Erreur de chargement de donnees:', fallbackError);
+        }
     }
 }
 
