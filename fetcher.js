@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 
 // --- CONFIGURATION ---
-const API_KEY = process.env.GEODAIR_API_KEY;
+const API_KEY = "4yCMoCEuAAI92GKryWthZ781eXAbc7u4";
 const BASE_URL = 'https://www.geodair.fr/api-ext';
 const POLLUANT = '03';
 const TYPE_DONNEE = 'a1';
@@ -20,6 +20,17 @@ if (!API_KEY) {
 
 
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+function formatGeodairDate(date) {
+    const pad = (n) => String(n).padStart(2, '0');
+    const day = pad(date.getDate());
+    const month = pad(date.getMonth() + 1);
+    const year = date.getFullYear();
+    const hours = pad(date.getHours());
+    const minutes = pad(date.getMinutes());
+
+    return `${day}/${month}/${year} ${hours}:${minutes}`;
+}
 
 function parseCsvText(csvText) {
     return new Promise((resolve, reject) => {
@@ -48,8 +59,8 @@ async function getGeodairData() {
     try {
         console.log("1. Demande de génération du fichier...");
         
-        const dateFin = new Date().toISOString(); 
-        const dateDebut = new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString();
+        const dateFin = formatGeodairDate(new Date());
+        const dateDebut = formatGeodairDate(new Date(Date.now() - 3 * 60 * 60 * 1000));
 
         const responseExport = await axios.get(`${BASE_URL}/statistique/export`, {
             params: {

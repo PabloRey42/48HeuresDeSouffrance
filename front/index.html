@@ -15,6 +15,40 @@
 </head>
 <body>
 	<div id="status">Chargement de la carte...</div>
+	<div id="date-filter" aria-label="Filtres de carte">
+		<label for="city-filter">Ville</label>
+		<input
+			type="text"
+			id="city-filter"
+			name="city-filter"
+			placeholder="Ex: Paris"
+			autocomplete="address-level2"
+		>
+
+		<label for="date-from">Du</label>
+		<input
+			type="text"
+			id="date-from"
+			name="date-from"
+			placeholder="JJ/MM/AAAA"
+			inputmode="numeric"
+			maxlength="10"
+			pattern="^\\d{2}/\\d{2}/\\d{4}$"
+		>
+
+		<label for="date-to">Au</label>
+		<input
+			type="text"
+			id="date-to"
+			name="date-to"
+			placeholder="JJ/MM/AAAA"
+			inputmode="numeric"
+			maxlength="10"
+			pattern="^\\d{2}/\\d{2}/\\d{4}$"
+		>
+
+		<button type="button" id="apply-filter">Appliquer</button>
+	</div>
 	<div id="map" aria-label="Carte des mesures de pollution"></div>
 
 	<script
