@@ -9,7 +9,11 @@ import pandas as pd
 from fastapi import APIRouter, HTTPException, Query
 
 from app.services.impact_index import compute_impact_0_100
-from app.services.pollution_data import latest_snapshot_for_station, load_pollution_dataframe
+from app.services.pollution_data import (
+    latest_snapshot_for_station,
+    load_pollution_dataframe,
+    stations_with_available_data,
+)
 from app.services.spatial import haversine_km, nearest_synop_station
 from app.services.stations_metadata import load_station_coordinates_df
 from app.services.weather_synop import fetch_synop_nearest_time, fetch_synop_stations_near
@@ -17,6 +21,32 @@ from app.services.weather_synop import fetch_synop_nearest_time, fetch_synop_sta
 router = APIRouter(tags=["impact"])
 
 _stations_coords_cache: pd.DataFrame | None = None
+_stations_available_cache: list[dict[str, Any]] | None = None
+
+
+def _build_available_stations_payload() -> list[dict[str, Any]]:
+    df = load_pollution_dataframe()
+    available = stations_with_available_data(df)
+
+    coords = _get_stations_coords()
+    merged = available.merge(coords, on="code_site", how="inner")
+    merged = merged.dropna(subset=["latitude", "longitude"])
+
+    payload: list[dict[str, Any]] = []
+    for _, r in merged.iterrows():
+        payload.append(
+            {
+                "id": str(r["code_site"]),
+                "name": str(r["name"]) if pd.notna(r.get("name")) else None,
+                "latitude": float(r["latitude"]),
+                "longitude": float(r["longitude"]),
+                "last_seen": pd.to_datetime(r["last_datetime"], utc=True).isoformat(),
+                "pollutants_count": int(r["pollutants_count"]),
+            }
+        )
+    return payload
+
+
 def _get_stations_coords() -> pd.DataFrame:
     global _stations_coords_cache
     if _stations_coords_cache is None:
@@ -133,3 +163,26 @@ def get_impact(
         raise HTTPException(status_code=404, detail="Aucune station pollution dans le rayon (ou données manquantes).")
 
     return {"zone": {"lat": lat, "lon": lon, "radius_km": radius_km}, "stations": out}
+
+
+@router.get("/stations")
+def get_stations_with_data(
+    refresh: bool = Query(False, description="Force le recalcul du cache en mémoire"),
+    limit: int = Query(5000, ge=1, le=20000, description="Nombre max de stations retournées"),
+) -> dict[str, Any]:
+    """
+    Liste légère des stations *ayant des données disponibles* (optimisée carte).
+    """
+    global _stations_available_cache
+
+    try:
+        if refresh or _stations_available_cache is None:
+            _stations_available_cache = _build_available_stations_payload()
+    except FileNotFoundError as e:
+        raise HTTPException(status_code=503, detail=str(e))
+    except ValueError as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erreur lors du chargement des stations: {e}")
+
+    return {"stations": _stations_available_cache[:limit], "count": min(len(_stations_available_cache), limit)}
