@@ -1,0 +1,10 @@
+{
+  "scripts": {
+    "fetch": "node fetcher.js",
+    "serve": "npx http-server front -p 8080"
+  },
+  "dependencies": {
+    "axios": "^1.14.0",
+    "csv-parser": "^3.2.0"
+  }
+}
