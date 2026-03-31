@@ -1,61 +1,49 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Map</title>
-
-	<link
-		rel="stylesheet"
-		href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-		integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-		crossorigin=""
-	>
-	<link rel="stylesheet" href="./styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Air Quality Dashboard Pro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.Default.css" />
+    <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
-	<div id="status">Chargement de la carte...</div>
-	<div id="date-filter" aria-label="Filtres de carte">
-		<label for="city-filter">Ville</label>
-		<input
-			type="text"
-			id="city-filter"
-			name="city-filter"
-			placeholder="Ex: Paris"
-			autocomplete="address-level2"
-		>
 
-		<label for="date-from">Du</label>
-		<input
-			type="text"
-			id="date-from"
-			name="date-from"
-			placeholder="JJ/MM/AAAA"
-			inputmode="numeric"
-			maxlength="10"
-			pattern="^\\d{2}/\\d{2}/\\d{4}$"
-		>
+<div id="sidebar">
+    <h2>Filtres Avancés</h2>
+    <div class="filter-item">
+        <label>Zone Géographique (ZAS)</label>
+        <select id="zoneSelect">
+            <option value="Toutes">-- Toutes les régions --</option>
+        </select>
+    </div>
+    <div class="filter-item">
+        <label>Rechercher une station</label>
+        <input type="text" id="siteSearch" placeholder="Ex: Paris, Station 42...">
+    </div>
+    <div class="filter-item">
+        <label>Intervalle de dates</label>
+        <input type="date" id="dateStart" style="margin-bottom:8px">
+        <input type="date" id="dateEnd">
+    </div>
+    <div class="filter-item">
+        <label>Seuils de pollution (µg/m³)</label>
+        <div style="display:flex; gap:10px;">
+            <input type="number" id="minVal" value="0" placeholder="Min">
+            <input type="number" id="maxVal" value="100" placeholder="Max">
+        </div>
+    </div>
+    <button onclick="loadData()">Appliquer les filtres</button>
+    <div id="status" style="margin-top:20px; font-size:0.9em; color:#95a5a6; text-align:center;"></div>
+</div>
 
-		<label for="date-to">Au</label>
-		<input
-			type="text"
-			id="date-to"
-			name="date-to"
-			placeholder="JJ/MM/AAAA"
-			inputmode="numeric"
-			maxlength="10"
-			pattern="^\\d{2}/\\d{2}/\\d{4}$"
-		>
+<div id="map"></div>
 
-		<button type="button" id="apply-filter">Appliquer</button>
-	</div>
-	<div id="map" aria-label="Carte des mesures de pollution"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.js"></script>
 
-	<script
-		src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-		integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-		crossorigin=""
-	></script>
-	<script src="./map.js"></script>
+<script src="./map.js"></script>
 </body>
 </html>
