@@ -1,12 +1,17 @@
 {
   "scripts": {
     "fetch": "node fetcher.js",
-    "serve": "node server.js",
-    "start": "node server.js"
+    "fetch:watch": "node fetcher.js --watch",
+    "serve": "npm run serve:front",
+    "serve:front": "npx http-server front -p 8080 -c-1",
+    "serve:python": "python3 app.py",
+    "run:node": "bash -lc 'npm run fetch && npm run serve:front'",
+    "run:python": "bash -lc 'npm run serve:python & npm run serve:front'"
   },
   "dependencies": {
     "axios": "^1.14.0",
     "csv-parser": "^3.2.0",
+    "dotenv": "^16.0.0",
     "express": "^4.21.2",
     "pg": "^8.13.3"
   }
