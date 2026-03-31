@@ -1,10 +1,11 @@
+require('dotenv').config();
 const axios = require('axios');
 const csv = require('csv-parser');
 const { Readable } = require('stream');
 const fs = require('fs');
 const path = require('path');
 
-const API_KEY = process.env.GEODAIR_API_KEY || '4yCMoCEuAAI92GKryWthZ781eXAbc7u4';
+const API_KEY = process.env.GEODAIR_API_KEY;
 const BASE_URL = 'https://www.geodair.fr/api-ext';
 const POLLUANT = process.env.POLLUANT || '03';
 const TYPE_DONNEE = process.env.TYPE_DONNEE || 'a1';
