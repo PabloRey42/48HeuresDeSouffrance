@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Air Quality Dashboard Pro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.Default.css" />
+    <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+
+<div id="sidebar">
+    <h2>Filtres Avancés</h2>
+    <div class="filter-item">
+        <label>Zone Géographique (ZAS)</label>
+        <select id="zoneSelect">
+            <option value="Toutes">-- Toutes les régions --</option>
+        </select>
+    </div>
+    <div class="filter-item">
+        <label>Rechercher une station</label>
+        <input type="text" id="siteSearch" placeholder="Ex: Paris, Station 42...">
+    </div>
+    <div class="filter-item">
+        <label>Intervalle de dates</label>
+        <input type="date" id="dateStart" style="margin-bottom:8px">
+        <input type="date" id="dateEnd">
+    </div>
+    <div class="filter-item">
+        <label>Seuils de pollution (µg/m³)</label>
+        <div style="display:flex; gap:10px;">
+            <input type="number" id="minVal" value="0" placeholder="Min">
+            <input type="number" id="maxVal" value="100" placeholder="Max">
+        </div>
+    </div>
+    <button onclick="loadData()">Appliquer les filtres</button>
+    <div id="status" style="margin-top:20px; font-size:0.9em; color:#95a5a6; text-align:center;"></div>
+</div>
+
+<div id="map"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.js"></script>
+
+<script src="./map.js"></script>
+</body>
+</html>
